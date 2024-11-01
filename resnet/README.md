@@ -1,5 +1,16 @@
 # Reproduce Image Classification on ImageNet
 
+## Run the job
+
+```
+cd resnet
+<activate the virtual environment>
+sbatch -A NAISS2024-22-1144 script/train/4xA40.sh $(which torchrun) config/data/rscd.toml config/train/resnet50.toml
+```
+
+Change `4xA40.sh` to any other scripts under `script/train/`
+
+
 ## Introduction
 
 This repo is an unofficial reproduction of training ResNet-50 on ImageNet which is one of the most classic machine learning workloads based on PyTorch 2.3.0 (latest stable version by the time of setting up this repo). The repo provides a simple and efficient implement, which could be used as the baseline for future adaptation.
