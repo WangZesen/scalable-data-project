@@ -10,6 +10,8 @@ PROJECT_DIR = os.path.relpath(os.path.join(os.path.dirname(__file__), '..'), '.'
 class Data(BaseModel):
     data_dir: str = Field(default='./data/Imagenet')
     sharded_data_dir: str = Field(default='./data/Imagenet-sharded')
+    train_prefix: str = Field(default='train_subset')
+    valid_prefix: str = Field(default='vali_20k_reorganized')
     num_classes: int = Field(default=1000)
 
 class Preprocess(BaseModel):

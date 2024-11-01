@@ -7,7 +7,7 @@ arch = "resnet50"
 use_amp = false
 
 [preprocess]
-preload_local = false
+preload_local = true
 interpolation = "bilinear"
 train_crop_size = 176
 val_image_size = 256
@@ -37,5 +37,5 @@ seed = 810975
 log_dir = './log'
 log_freq = 100
 wandb_on = true
-wandb_project = "reproduce_resnet"
+wandb_project = "scalable-data"
 ckpt_freq = 45

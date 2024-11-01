@@ -1,0 +1,5 @@
+data_dir = "./data/RSCD"
+sharded_data_dir = "./data/RSCD"
+num_classes = 27
+train_prefix = 'train_subset'
+valid_prefix = 'vali_20k_reorganized'
