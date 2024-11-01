@@ -1,4 +1,7 @@
-# Decentralized Training
+# Member
+Zesen Wang
+Palatip Jopanya
+Sheng Liu
 
 
 ## Acknowledgements
