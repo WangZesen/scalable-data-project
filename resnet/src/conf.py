@@ -34,6 +34,7 @@ class Optim(BaseModel):
     weight_decay: float = Field(default=1e-4)
     adam: Adam = Field(default_factory=Adam)
     sgd: SGD = Field(default_factory=SGD)
+    accum_iter: int = Field(default=4)
 
 class LRScheduler(BaseModel):
     name: str = Field(default='cosine')
@@ -98,6 +99,8 @@ class Train(BaseModel):
     use_amp: bool = Field(default=True)
     preprocess: Preprocess = Field(default_factory=Preprocess)
     optim: Optim = Field(default_factory=Optim)
+    backend: str = Field(default='pytorchddp')
+    decent_topo: str = Field(default='complete')
     lr_scheduler: LRScheduler = Field(default_factory=LRScheduler)
     reproduce: Reproduce = Field(default_factory=Reproduce)
     log: Log = Field(default_factory=Log)

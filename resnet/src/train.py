@@ -40,10 +40,11 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.profiler import schedule, profile, ProfilerActivity
 from data.dataloader import DALIWrapper
 from conf import parse_config, Config
-from optims import get_optim, get_lr_scheduler
+from optims import get_optim, get_lr_scheduler, get_optim_fn, get_lr_scheduler_fn
 from data import preload_to_local, get_dali_train_loader, get_dali_valid_loader
 from utils import initialize_dist, gather_statistics, SmoothedValue, get_accuracy
 from models import load_model
+from decent_dp.ddp import DecentralizedDataParallel as DecentDP
 
 '''
     Functions
@@ -87,6 +88,50 @@ def train_epoch(cfg: Config,
         _loss = loss.detach().item()
         loss_metric.update(_loss)
         lr = optimizer.param_groups[0]['lr'] if optimizer is not None else model._optims[0].param_groups[0]['lr']
+        step += 1
+
+        if rank == 0:
+            if cfg.train.log.wandb_on and (step % cfg.train.log.log_freq == 0):
+                wandb.log({'loss': loss_metric.avg, 'lr': lr}, step=step)
+
+            if step % cfg.train.log.log_freq == 0:
+                throughput_metric.update((images.size(0) * cfg.train.network.world_size) / (time.time() - iter_start_time), images.size(0))
+                logger.info(f'step: {step} ({throughput_metric.avg:5.2f} imgs/s), loss: {loss_metric.avg:.6f}' + \
+                        f', lr: {lr:.6f}, mem: {torch.cuda.max_memory_allocated() / (1024 ** 3):.2f} GB')
+        profiler.step()
+        del images, labels, pred, loss
+    return loss_metric.global_avg, step, time.time() - start_time
+
+
+def decent_train_epoch(cfg: Config,
+                       model: DecentDP,
+                       train_ds: DALIWrapper,
+                       criterion: Module,
+                       epoch: int,
+                       step: int,
+                       scaler: GradScaler,
+                       profiler: Any):
+    start_time = time.time()
+    model.train()
+    loss_metric = SmoothedValue(cfg.train.log.log_freq)
+    throughput_metric = SmoothedValue(cfg.train.log.log_freq)
+    if rank == 0:
+        logger.info(f'[Train Epoch {epoch+1}]')
+
+    for images, labels in train_ds:
+        iter_start_time = time.time()
+        # Forward pass
+        with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=cfg.train.use_amp):
+            pred = model(images)
+            loss = criterion(pred, labels.view(-1))
+
+        # Backward pass
+        scaler.scale(loss).backward()
+
+        # Update metrics
+        _loss = loss.detach().item()
+        loss_metric.update(_loss)
+        lr = model._optims[0].param_groups[0]['lr'] if len(model._optims) else 0.0
         step += 1
 
         if rank == 0:
@@ -163,11 +208,23 @@ def main():
         trainable_params = sum(dict((p.data_ptr(), p.numel()) for p in model.parameters() if p.requires_grad).values())
         logger.info(f'[INFO] Model trainable parameters: {trainable_params}')
 
-    optimizer = get_optim(cfg, model)
-    lr_scheduler = get_lr_scheduler(cfg, optimizer, num_batches)
-    model = DDP(model, gradient_as_bucket_view=True, broadcast_buffers=True)
-    criterion = torch.nn.CrossEntropyLoss(label_smoothing=cfg.train.label_smoothing)
+    optimizer = None
+    lr_scheduler = None
     scaler = torch.cuda.amp.GradScaler(enabled=cfg.train.use_amp)
+    if cfg.train.backend == 'pytorchddp':
+        optimizer = get_optim(cfg, model)
+        lr_scheduler = get_lr_scheduler(cfg, optimizer, num_batches)
+        model = DDP(model, gradient_as_bucket_view=True, broadcast_buffers=True)
+    elif cfg.train.backend == 'decentdp':
+        model = DecentDP(model,
+                         optim_fn=get_optim_fn(cfg),
+                         lr_scheduler_fn=get_lr_scheduler_fn(cfg, num_batches),
+                         topology=cfg.train.decent_topo,
+                         scaler=scaler)
+    else:
+        raise ValueError(f'Unknown backend: {cfg.train.backend}. Supported backends: pytorchddp, decentdp')
+
+    criterion = torch.nn.CrossEntropyLoss(label_smoothing=cfg.train.label_smoothing)
 
     if rank == 0:
         logger.info(cfg)
@@ -217,16 +274,29 @@ def main():
         ),
     ) as profiler:
         for epoch in range(start_epoch, cfg.train.max_epochs):
-            train_loss, global_step, epoch_train_time = train_epoch(cfg,
-                                                                    model,
-                                                                    train_ds,
-                                                                    criterion,
-                                                                    optimizer,
-                                                                    lr_scheduler,
-                                                                    epoch,
-                                                                    global_step,
-                                                                    scaler,
-                                                                    profiler)
+            if cfg.train.backend == 'pytorchddp':
+                train_loss, global_step, epoch_train_time = train_epoch(cfg,
+                                                                        model,
+                                                                        train_ds,
+                                                                        criterion,
+                                                                        optimizer, # type: ignore
+                                                                        lr_scheduler, # type: ignore
+                                                                        epoch,
+                                                                        global_step,
+                                                                        scaler,
+                                                                        profiler)
+            elif cfg.train.backend == 'decentdp':
+                train_loss, global_step, epoch_train_time = decent_train_epoch(cfg,
+                                                                              model, # type: ignore
+                                                                              train_ds,
+                                                                              criterion,
+                                                                              epoch,
+                                                                              global_step,
+                                                                              scaler,
+                                                                              profiler)
+            else:
+                raise ValueError(f'Unknown backend: {cfg.train.backend}. Supported backends: pytorchddp, decentdp')
+
             total_train_time += epoch_train_time
             val_loss, val_acc1, val_acc5, val_samples = valid(model, valid_ds, criterion, epoch + 1)
             stats = gather_statistics(train_loss, val_loss, val_acc1, val_acc5, val_samples)
@@ -238,8 +308,8 @@ def main():
                     'epoch': epoch + 1,
                     'global_step': global_step,
                     'model_state_dict': model.state_dict(),
-                    'optim_state_dict': optimizer.state_dict(),
-                    'scheduler_state_dict': lr_scheduler.state_dict(),
+                    'optim_state_dict': optimizer.state_dict() if optimizer is not None else None,
+                    'scheduler_state_dict': lr_scheduler.state_dict() if lr_scheduler is not None else None,
                     'train_loss': stats[0],
                     'val_loss': stats[1],
                     'val_acc1': stats[2],
