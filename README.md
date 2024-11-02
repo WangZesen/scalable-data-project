@@ -1,11 +1,74 @@
-# Member
-Zesen Wang
+# **Decent-RSC**: Project of Scalable Data Science and Distributed ML
 
-Palatip Jopanya
+## Members
 
-Sheng Liu
+Zesen Wang, Palatip Jopanya, Sheng Liu
+
+## Introduction
+
+## Method
+
+## Results
+
+## Reproduce Experiments
+
+### Setup Python Environment
+
+First, setup a virtual Python environment using `virtualenv` or `Anaconda` with `Python>=3.11`. Then install the dependencies as follows.
+
+```
+# install latest PyTorch
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+# install dali with cuda-11.0 as it has cuda dependency included
+pip install --extra-index-url https://pypi.nvidia.com --upgrade nvidia-dali-cuda110
+# other auxiliary library
+pip install wandb seaborn loguru scipy tqdm tomli-w pydantic
+# wrapper library for decentralized training
+pip install decent-dp
+```
+
+One has to login to wandb for uploading the training/testing statistics before runing the experiments ([detailed instruction](https://docs.wandb.ai/quickstart/)).
+```
+wandb login
+```
+
+### Prepare Data
+
+Download the Road Surface Dataset from [here](https://thu-rsxd.com/).
+
+Put the data under `./data/RSCD` and arrage the data like below for training and validation set.
+```
+data/RSCD/
+├── train
+│   ├── dry_asphalt_severe
+│   ├── dry_asphalt_slight
+│   ├── dry_asphalt_smooth
+│   ├── dry_concrete_severe
+│   ├── dry_concrete_slight
+│   ├── ...
+├── val
+│   ├── dry_asphalt_severe
+│   ├── dry_asphalt_slight
+│   ├── dry_asphalt_smooth
+│   ├── dry_concrete_severe
+│   ├── dry_concrete_slight
+│   ├── ...
+```
+
+### Train
+
+The experiments are conducted on a data center using Slurm as the scheduler. To run the training with four A40 GPUs, 
+
+```
+sbatch -A <PROJECT_ACCOUNT> script/train/4xA40.sh $(which torchrun) config/data/rscd.toml config/train/resnet50.toml
+```
+where `<PROJECT_ACCOUNT>` is the slurm project account.
+
+The evaulation on the validation set is done along with the training, and it's logged in both the log files and the wandb.
+
+#### Configs
+- `config/data/rscd.toml`: config file for RSC dataset.
+- `config/train/resnet50.toml`: config file for typical distributed training with ResNet-50.
+- `config/train/decent_resnet50.toml`: config file for decentralized training with ResNet-50.
 
 
-## Acknowledgements
-
-The computations resources were enabled by resources provided by the National Academic Infrastructure for Supercomputing in Sweden (NAISS), partially funded by the Swedish Research Council through grant agreement no. 2022-06725.
