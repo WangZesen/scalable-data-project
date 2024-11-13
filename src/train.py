@@ -68,6 +68,7 @@ def train_epoch(cfg: Config,
         logger.info(f'[Train Epoch {epoch+1}]')
 
     for images, labels in train_ds:
+        images = images.contiguous(memory_format=torch.channels_last)
         iter_start_time = time.time()
         # Forward pass
         optimizer.zero_grad()
@@ -119,6 +120,7 @@ def decent_train_epoch(cfg: Config,
         logger.info(f'[Train Epoch {epoch+1}]')
 
     for images, labels in train_ds:
+        images = images.contiguous(memory_format=torch.channels_last)
         iter_start_time = time.time()
         # Forward pass
         with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=cfg.train.use_amp):
@@ -156,9 +158,10 @@ def valid(model: Module, valid_ds: DALIWrapper, criterion: Module, epoch: int):
     total_samples = 0
 
     if rank == 0:
-        logger.info(f'[Validate Epoch {epoch+1}]')
+        logger.info(f'[Validate Epoch {epoch}]')
 
     for images, labels in valid_ds:
+        images = images.to(memory_format=torch.channels_last)
         logit = model(images)
         loss = criterion(logit, labels.view(-1))
         acc1, acc5 = get_accuracy(logit, labels, topk=(1, 5))
@@ -202,6 +205,7 @@ def main():
     '''
 
     model = load_model(cfg.train.arch, num_classes=cfg.data.num_classes)
+    model = model.to(memory_format=torch.channels_last)
     model = model.to('cuda')
 
     if rank == 0:
