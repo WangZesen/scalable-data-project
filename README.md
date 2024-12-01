@@ -5,9 +5,18 @@
 Zesen Wang, Palatip Jopanya, Sheng Liu
 
 ## Introduction
-Distributed training for deep neural networks has become a mainstream approach for consensus algorithms due to its efficiency and scalability, with the All-Reduce algorithm being a common example. However, in practice, a high-speed network connection between workers is essential to achieve high training performance in a distributed workflow. Decentralized training, on the other hand, is a promising alternative for training deep neural networks. The key difference between decentralized and distributed training is that, in decentralized training, only immediate worker pairs (or pre-defined selected worker pairs) communicate. This reduces communication overhead and accelerates training time.
+Distributed training for deep neural networks has become a mainstream approach for consensus algorithms due to its efficiency and scalability, with the All-Reduce algorithm being a common example. However, in practice, a high-speed network connection between workers is essential to achieve high training performance in a distributed workflow. Decentralized training, on the other hand, is a promising alternative for training deep neural networks. The key difference between decentralized and distributed training is that, in decentralized training, only immediate worker pairs (or pre-defined selected worker pairs corresponding to the communication topology) communicate. This reduces communication overhead and speeds up per-iteration runtime to accelerate training time eventually.
 
 In this project, we investigate the performance of decentralized training on the Road Surface Classification Dataset (RSCD), which classifies surfaces into 27 labeled classes based on their evenness, friction, and material. The deep neural network architecture used is Deep Residual Networks (ResNet-50). Training is conducted with an independently and identically distributed (IID) dataset (non-IID data distribution can be further investigated if time allows).
+
+## Aspects of Multi-node Decentralized Training
+The main task for decentralized training is to update the global parameter, $`x \in \Re^d`$, by the local parameter $`x_i \in \Re^d`$ at each worker (computing node) $` i = 1,2,3, ..., N`$ to reach the consensus. The optimization is to minimize the aggregated local training loss 
+
+$$
+\underset{x_1, x_2, ..., x_N}{\text{minimize}}  \ \frac{1}{N} \sum_{i=q}^N F_i(x_i)  \ , \ x_i = x_j \ \forall \ i,j 
+$$
+
+where $` F_i(x_i) `$ is the expected training loss of the local model $`i`$ at worker $`i`$.
 
 ## Method
 
