@@ -32,6 +32,10 @@ its results are not needed by the worker and its neighbors until the same bucket
 the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration.
 
 ## Method
+### Dataset
+* Download dataset from https://thu-rsxd.com/rscd/ and upload it to the server.
+### Data preprocessing
+
 
 ## Results
 
