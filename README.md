@@ -9,14 +9,27 @@ Distributed training for deep neural networks has become a mainstream approach f
 
 In this project, we investigate the performance of decentralized training on the Road Surface Classification Dataset (RSCD), which classifies surfaces into 27 labeled classes based on their evenness, friction, and material. The deep neural network architecture used is Deep Residual Networks (ResNet-50). Training is conducted with an independently and identically distributed (IID) dataset (non-IID data distribution can be further investigated if time allows).
 
-## Aspects of Multi-node Decentralized Training
+## Multi-node Decentralized Training
 The main task for decentralized training is to update the global parameter, $`x \in \Re^d`$, by the local parameter $`x_i \in \Re^d`$ at each worker (computing node) $` i = 1,2,3, ..., N`$ to reach the consensus. The optimization is to minimize the aggregated local training loss 
 
 $$
 \underset{x_1, x_2, ..., x_N}{\text{minimize}}  \ \frac{1}{N} \sum_{i=q}^N F_i(x_i)  \ , \ x_i = x_j \ \forall \ i,j 
 $$
 
-where $` F_i(x_i) `$ is the expected training loss of the local model $`i`$ at worker $`i`$.
+where $` F_i(x_i) `$ is the expected training loss of the local model $`x_i`$ at worker $`i`$. By doing so, we use adaptive momentum versions of decentralized gradient descent as 
+
+$$
+x^{(t)}_i \Leftarrow - \alpha^{(t)}d_i^{(t)} + \sum_j 
+w^{(t)}_ij x^{(t-1)}_j
+$$
+
+where the first term is an update that reduces the value of $` F_i(x_i) `$ and the final term accounts for the averaged model parameters of neighboring workers and drives the local parameters towards the same first-order stationary point
+
+### Overlapping communication and computation
+The system splits the execution of the backward pass into buckets and interleaves the corresponding
+local model updates. After updating a bucket, the corresponding communication can be initiated, and
+its results are not needed by the worker and its neighbors until the same bucket requires updating in
+the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration.
 
 ## Method
 
