@@ -1,4 +1,5 @@
 import os
+from loguru import logger
 import torch
 import torch.distributed as dist
 from nvidia.dali.pipeline import Pipeline
@@ -22,7 +23,8 @@ class DaliImageNetTrainPipeline(Pipeline):
                  interpolation: str,
                  crop: int,
                  seed: int,
-                 dont_use_mmap: bool):
+                 dont_use_mmap: bool,
+                 heterogeneous: bool):
         super().__init__(batch_size,
                          num_threads=4,
                          device_id=0,
@@ -34,7 +36,7 @@ class DaliImageNetTrainPipeline(Pipeline):
             "triangular": types.INTERP_TRIANGULAR,
         }[interpolation]
 
-        if dist.is_initialized():
+        if dist.is_initialized() and (not heterogeneous):
             shard_id = dist.get_rank()
             num_shards = dist.get_world_size()
         else:
@@ -161,13 +163,17 @@ class DALIWrapper(object):
 
 
 def get_dali_train_loader(cfg: 'Config'):
-    train_data_dir = os.path.join(cfg.data.data_dir, "train")
+    if cfg.data.alpha > 0:
+        train_data_dir = os.path.join(cfg.data.data_dir, f"train_{dist.get_rank()}")
+    else:
+        train_data_dir = os.path.join(cfg.data.data_dir, "train")
     pipe = DaliImageNetTrainPipeline(
         batch_size=cfg.train.batch_size_per_local_batch,
         data_dir=train_data_dir,
         interpolation=cfg.train.preprocess.interpolation,
         crop=cfg.train.preprocess.train_crop_size,
         seed=cfg.train.reproduce.seed,
+        heterogeneous=cfg.data.alpha > 0,
         dont_use_mmap=not cfg.train.preprocess.preload_local
     )
     pipe.build()
@@ -175,7 +181,11 @@ def get_dali_train_loader(cfg: 'Config'):
         pipe, reader_name="Reader", last_batch_policy=LastBatchPolicy.DROP
     )
     world_size = dist.get_world_size() if dist.is_initialized() else 1
-    return DALIWrapper(train_loader), int(pipe.epoch_size('Reader') / cfg.train.batch_size_per_local_batch / world_size)
+    logger.info(f"Epoch size: {pipe.epoch_size('Reader')}")
+    if cfg.data.alpha > 0:
+        return DALIWrapper(train_loader), int(pipe.epoch_size('Reader') / cfg.train.batch_size_per_local_batch)
+    else:
+        return DALIWrapper(train_loader), int(pipe.epoch_size('Reader') / cfg.train.batch_size_per_local_batch / world_size)
 
 
 def get_dali_valid_loader(cfg: 'Config'):

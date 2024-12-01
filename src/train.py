@@ -59,6 +59,7 @@ def train_epoch(cfg: Config,
                 epoch: int,
                 step: int,
                 scaler: GradScaler,
+                num_batches: int,
                 profiler: Any):
     start_time = time.time()
     model.train()
@@ -67,8 +68,17 @@ def train_epoch(cfg: Config,
     if rank == 0:
         logger.info(f'[Train Epoch {epoch+1}]')
 
-    for images, labels in train_ds:
-        images = images.contiguous(memory_format=torch.channels_last)
+    # train_ds.reset()
+    iterator = iter(train_ds)
+    cnt = 0
+
+    while True:
+        try:
+            images, labels = next(iterator)
+        except StopIteration:
+            iterator = iter(train_ds)
+            images, labels = next(iterator)
+
         iter_start_time = time.time()
         # Forward pass
         optimizer.zero_grad()
@@ -101,6 +111,11 @@ def train_epoch(cfg: Config,
                         f', lr: {lr:.6f}, mem: {torch.cuda.max_memory_allocated() / (1024 ** 3):.2f} GB')
         profiler.step()
         del images, labels, pred, loss
+
+        cnt += 1
+        if cnt >= num_batches:
+            break
+
     return loss_metric.global_avg, step, time.time() - start_time
 
 
@@ -111,6 +126,7 @@ def decent_train_epoch(cfg: Config,
                        epoch: int,
                        step: int,
                        scaler: GradScaler,
+                       num_batches: int,
                        profiler: Any):
     start_time = time.time()
     model.train()
@@ -119,7 +135,17 @@ def decent_train_epoch(cfg: Config,
     if rank == 0:
         logger.info(f'[Train Epoch {epoch+1}]')
 
-    for images, labels in train_ds:
+    # train_ds.reset()
+    iterator = iter(train_ds)
+    cnt = 0
+
+    while True:
+        try:
+            images, labels = next(iterator)
+        except StopIteration:
+            iterator = iter(train_ds)
+            images, labels = next(iterator)
+        
         images = images.contiguous(memory_format=torch.channels_last)
         iter_start_time = time.time()
         # Forward pass
@@ -146,6 +172,10 @@ def decent_train_epoch(cfg: Config,
                         f', lr: {lr:.6f}, mem: {torch.cuda.max_memory_allocated() / (1024 ** 3):.2f} GB')
         profiler.step()
         del images, labels, pred, loss
+
+        cnt += 1
+        if cnt >= num_batches:
+            break
     return loss_metric.global_avg, step, time.time() - start_time
 
 
@@ -198,6 +228,14 @@ def main():
         preload_to_local(cfg)
 
     train_ds, num_batches = get_dali_train_loader(cfg)
+
+    if cfg.data.alpha > 0:
+        # synchronize number of batches across workers
+        _num_batches = torch.tensor(num_batches, dtype=torch.float32, device='cuda')
+        dist.all_reduce(_num_batches, op=dist.ReduceOp.AVG)
+        num_batches = round(_num_batches.item())
+        logger.info(f'Synchronized number of batches per epoch: {num_batches}')
+
     valid_ds = get_dali_valid_loader(cfg)
 
     '''
@@ -205,7 +243,7 @@ def main():
     '''
 
     model = load_model(cfg.train.arch, num_classes=cfg.data.num_classes)
-    model = model.to(memory_format=torch.channels_last)
+    model = model.to(memory_format=torch.channels_last) # type: ignore
     model = model.to('cuda')
 
     if rank == 0:
@@ -288,6 +326,7 @@ def main():
                                                                         epoch,
                                                                         global_step,
                                                                         scaler,
+                                                                        num_batches,
                                                                         profiler)
             elif cfg.train.backend == 'decentdp':
                 train_loss, global_step, epoch_train_time = decent_train_epoch(cfg,
@@ -297,6 +336,7 @@ def main():
                                                                               epoch,
                                                                               global_step,
                                                                               scaler,
+                                                                              num_batches,
                                                                               profiler)
             else:
                 raise ValueError(f'Unknown backend: {cfg.train.backend}. Supported backends: pytorchddp, decentdp')

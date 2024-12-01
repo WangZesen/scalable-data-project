@@ -13,6 +13,7 @@ class Data(BaseModel):
     train_prefix: str = Field(default='train_subset')
     valid_prefix: str = Field(default='vali_20k_reorganized')
     num_classes: int = Field(default=1000)
+    alpha: float = Field(default=0.0, description='data heterogeneity')
 
 class Preprocess(BaseModel):
     preload_local: bool = Field(default=False)
