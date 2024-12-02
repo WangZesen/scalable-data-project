@@ -11,7 +11,7 @@ In this project, we investigate the performance of decentralized training on the
 
 ## Method
 
-## Multi-node Decentralized Training
+### Multi-node Decentralized Training
 The main task for decentralized training is to update the global parameter, $`x \in \Re^d`$, by the local parameter $`x_i \in \Re^d`$ at each worker (computing node) $` i = 1,2,3, ..., N`$ to reach the consensus. The optimization is to minimize the aggregated local training loss 
 
 $$
@@ -33,7 +33,12 @@ local model updates. After updating a bucket, the corresponding communication ca
 its results are not needed by the worker and its neighbors until the same bucket requires updating in
 the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration.
 
+### Heterogeneous Communication Cost
+
+In All-Reduce, all workers must participate in each iteration. On the other hand, decentralized training allows workers to communicate only with their immediate neighbors (also called gossip communication). In the practical environment, the bandwidth between the nodes is limited and can be varied. Hence, the decentralized training could speed up the training time because of reduced communication costs. The setting of network topology influences the training time. Herein the alternating Exponential Ring topology is considered.
+
 ## Results
+We simulate 
 
 ## Reproduce Experiments
 
