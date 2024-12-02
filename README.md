@@ -9,6 +9,8 @@ Distributed training for deep neural networks has become a mainstream approach f
 
 In this project, we investigate the performance of decentralized training on the Road Surface Classification Dataset (RSCD), which classifies surfaces into 27 labeled classes based on their evenness, friction, and material. The deep neural network architecture used is Deep Residual Networks (ResNet-50). Training is conducted with an independently and identically distributed (IID) dataset (non-IID data distribution can be further investigated if time allows).
 
+## Method
+
 ## Multi-node Decentralized Training
 The main task for decentralized training is to update the global parameter, $`x \in \Re^d`$, by the local parameter $`x_i \in \Re^d`$ at each worker (computing node) $` i = 1,2,3, ..., N`$ to reach the consensus. The optimization is to minimize the aggregated local training loss 
 
@@ -30,12 +32,6 @@ The system splits the execution of the backward pass into buckets and interleave
 local model updates. After updating a bucket, the corresponding communication can be initiated, and
 its results are not needed by the worker and its neighbors until the same bucket requires updating in
 the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration.
-
-## Method
-### Dataset
-* Download dataset from https://thu-rsxd.com/rscd/ and upload it to the server.
-### Data preprocessing
-
 
 ## Results
 
