@@ -25,7 +25,7 @@ x^{(t)}_i \Leftarrow - \alpha^{(t)}d_i^{(t)} + \sum_j
 w^{(t)}_ij x^{(t-1)}_j
 $$
 
-where the first term is an update that reduces the value of $` F_i(x_i) `$ and the final term accounts for the averaged model parameters of neighboring workers and drives the local parameters towards the same first-order stationary point
+where the first term is an update that reduces the value of $` F_i(x_i) `$ and the final term accounts for the averaged model parameters of neighboring workers and drives the local parameters towards the same first-order stationary point.
 
 ### Overlapping communication and computation
 The system splits the execution of the backward pass into buckets and interleaves the corresponding
