@@ -38,7 +38,20 @@ the next iteration. By doing so, the decentralized updates are independent of ne
 In All-Reduce, all workers must participate in each iteration. On the other hand, decentralized training allows workers to communicate only with their immediate neighbors (also called gossip communication). In the practical environment, the bandwidth between the nodes is limited and can be varied. Hence, the decentralized training could speed up the training time because of reduced communication costs. The setting of network topology influences the training time. Herein the alternating Exponential Ring topology is considered.
 
 ## Results
-We simulate 
+### 2x4xA40 GPUs results 
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc1_A40.png)
+
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc5_A40.png)
+
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/val-loss-A40.png)
+
+### 2x4xA100 GPUs results 
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc1_A100.png)
+
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc5_A100.png)
+
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/val-loss-A100.png)
+
 
 ## Reproduce Experiments
 
