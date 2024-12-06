@@ -31,12 +31,13 @@ where the first term is an update that reduces the value of $` F_i(x_i) `$ and t
 The system splits the execution of the backward pass into buckets and interleaves the corresponding
 local model updates. After updating a bucket, the corresponding communication can be initiated, and
 its results are not needed by the worker and its neighbors until the same bucket requires updating in
-the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration.
+the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration as in Figure 1.
 
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/timelines.png?raw=true" alt="Sublime's custom image"/>
+  Figure 1. Timelines of two workers in decentralized training.
 </p>
-<p style="text-align: center;">Figure 1. Timelines of two workers in decentralized training.</p>
+
 
 ### Heterogeneous Communication Cost
 
@@ -44,29 +45,61 @@ In All-Reduce, all workers must participate in each iteration. On the other hand
 
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/ring.png?raw=true" alt="Sublime's custom image"/>
+  Figure 2. The alternating Exponential Ring topology
 </p>
 
 ## Results 
 ### 2x4xA40 GPUs with IID data distribution
 <p align="center">
-  <img src="xx?raw=true" alt="Sublime's custom image"/>
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A40_iid_acc1.png?raw=true" alt="Sublime's custom image"/>
+  
 </p>
 <p align="center">
-  <img src="xx?raw=true" alt="Sublime's custom image"/>
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A40_iid_acc5.png?raw=true" alt="Sublime's custom image"/>
+  
 </p>
+
 <p align="center">
-  <img src="xx?raw=true" alt="Sublime's custom image"/>
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A40_iid_val.png?raw=true" alt="Sublime's custom image"/>
+  
 </p>
 
 ### 2x4xA100 GPUs with IID data distribution 
 <p align="center">
-  <img src="xx?raw=true" alt="Sublime's custom image"/>
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-iid-acc1.png?raw=true" alt="Sublime's custom image"/>
+  
 </p>
 <p align="center">
-  <img src="xx?raw=true" alt="Sublime's custom image"/>
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-iid-acc5.png?raw=true" alt="Sublime's custom image"/>
+  
+</p>
+
+<p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-iid-val.png?raw=true" alt="Sublime's custom image"/>
+  
+</p>
+
+### Hardware comparison A400 & A40 in IID
+<p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-A40-iid-all-reduce-acc5-acc1.png?raw=true" alt="Sublime's custom image"/>
 </p>
 <p align="center">
-  <img src="xx?raw=true" alt="Sublime's custom image"/>
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-A40-iid-decen-acc5.png?raw=true" alt="Sublime's custom image"/>
+</p>
+
+### Compare alphas in Non-IID
+<p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/compare-alphas_A100_both.png?raw=true" alt="Sublime's custom image"/>
+</p>
+
+### Alphas of All-Reduce of 2x4xA100 in Non-IID
+<p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/AllReduce 2x4xA100 Non-IID alphas.png?raw=true" alt="Sublime's custom image"/>
+</p>
+
+### Alphas of Decen of 2x4xA100 in Non-IID
+<p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/Decen 2x4xA100 Non-IID alphas.png?raw=true" alt="Sublime's custom image"/>
 </p>
 
 ## Reproduce Experiments
