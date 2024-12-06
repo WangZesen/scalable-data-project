@@ -22,10 +22,10 @@ where $` F_i(x_i) `$ is the expected training loss of the local model $`x_i`$ at
 
 $$
 x^{(t)}_i \Leftarrow - \alpha^{(t)}d_i^{(t)} + \sum_j 
-w^{(t)}_ij x^{(t-1)}_j
+w^{(t)}_{ij} x^{(t-1)}_j
 $$
 
-where the first term is an update that reduces the value of $` F_i(x_i) `$ and the final term accounts for the averaged model parameters of neighboring workers and drives the local parameters towards the same first-order stationary point
+where the first term is an update that reduces the value of $` F_i(x_i) `$ and the final term accounts for the averaged model parameters of neighboring workers and drives the local parameters towards the same first-order stationary point.
 
 ### Overlapping communication and computation
 The system splits the execution of the backward pass into buckets and interleaves the corresponding
@@ -37,8 +37,21 @@ the next iteration. By doing so, the decentralized updates are independent of ne
 
 In All-Reduce, all workers must participate in each iteration. On the other hand, decentralized training allows workers to communicate only with their immediate neighbors (also called gossip communication). In the practical environment, the bandwidth between the nodes is limited and can be varied. Hence, the decentralized training could speed up the training time because of reduced communication costs. The setting of network topology influences the training time. Herein the alternating Exponential Ring topology is considered.
 
-## Results
-We simulate 
+## Results 
+### 2x4xA40 GPUs with IID data distribution
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc1_A40.png?raw=true)
+
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc5_A40.png?raw=true)
+
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/val-loss-A40.png?raw=true)
+
+### 2x4xA100 GPUs with IID data distribution 
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc1_A100.png?raw=true)
+
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc5_A100.png?raw=true)
+
+![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/val-loss-A100.png?raw=true)
+
 
 ## Reproduce Experiments
 
