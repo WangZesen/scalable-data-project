@@ -20,10 +20,10 @@ $$
 
 where $` F_i(x_i) `$ is the expected training loss of the local model $`x_i`$ at worker $`i`$. By doing so, we use adaptive momentum versions of decentralized gradient descent as 
 
-$$
-x^{(t)}_i \Leftarrow - \alpha^{(t)}d_i^{(t)} + \sum_j 
-w^{(t)}_{ij} x^{(t-1)}_j
-$$
+<p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/eq2.png?raw=true" alt="Sublime's custom image"/>
+</p>
+
 
 where the first term is an update that reduces the value of $` F_i(x_i) `$ and the final term accounts for the averaged model parameters of neighboring workers and drives the local parameters towards the same first-order stationary point.
 
@@ -33,25 +33,41 @@ local model updates. After updating a bucket, the corresponding communication ca
 its results are not needed by the worker and its neighbors until the same bucket requires updating in
 the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration.
 
+<p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/timelines.png?raw=true" alt="Sublime's custom image"/>
+</p>
+<p style="text-align: center;">Figure 1. Timelines of two workers in decentralized training.</p>
+
 ### Heterogeneous Communication Cost
 
 In All-Reduce, all workers must participate in each iteration. On the other hand, decentralized training allows workers to communicate only with their immediate neighbors (also called gossip communication). In the practical environment, the bandwidth between the nodes is limited and can be varied. Hence, the decentralized training could speed up the training time because of reduced communication costs. The setting of network topology influences the training time. Herein the alternating Exponential Ring topology is considered.
 
+<p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/ring.png?raw=true" alt="Sublime's custom image"/>
+</p>
+
 ## Results 
 ### 2x4xA40 GPUs with IID data distribution
-![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc1_A40.png?raw=true)
-
-![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc5_A40.png?raw=true)
-
-![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/val-loss-A40.png?raw=true)
+<p align="center">
+  <img src="xx?raw=true" alt="Sublime's custom image"/>
+</p>
+<p align="center">
+  <img src="xx?raw=true" alt="Sublime's custom image"/>
+</p>
+<p align="center">
+  <img src="xx?raw=true" alt="Sublime's custom image"/>
+</p>
 
 ### 2x4xA100 GPUs with IID data distribution 
-![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc1_A100.png?raw=true)
-
-![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/valacc5_A100.png?raw=true)
-
-![](https://github.com/WangZesen/scalable-data-project/blob/main/Fig/val-loss-A100.png?raw=true)
-
+<p align="center">
+  <img src="xx?raw=true" alt="Sublime's custom image"/>
+</p>
+<p align="center">
+  <img src="xx?raw=true" alt="Sublime's custom image"/>
+</p>
+<p align="center">
+  <img src="xx?raw=true" alt="Sublime's custom image"/>
+</p>
 
 ## Reproduce Experiments
 
