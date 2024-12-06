@@ -79,9 +79,30 @@ In All-Reduce, all workers must participate in each iteration. On the other hand
   
 </p>
 
+<table align="center">
+  <tr>
+    <th>Setting</th>
+    <th>Total train time (s): All-Reduce</th>
+    <th>Total train time (s): Decen</th>
+    <th>Speedup (s)</th>
+  </tr>
+  <tr>
+    <td>IID 2x4xA40</td>
+    <td>1220.96</td>
+    <td>940.18</td>
+    <td bgcolor="green">280.78</td>
+  </tr>
+  <tr>
+    <td>IID 2x4xA100</td>
+    <td>546.64</td>
+    <td>508.78</td>
+    <td bgcolor="green">37.86</td>
+  </tr>
+</table>
+
 ### Hardware comparison A400 & A40 in IID
 <p align="center">
-  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-A40-iid-all-reduce-acc5-acc1.png?raw=true" alt="Sublime's custom image"/>
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-A40-iid-all-reduce-acc5.png?raw=true" alt="Sublime's custom image"/>
 </p>
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-A40-iid-decen-acc5.png?raw=true" alt="Sublime's custom image"/>
