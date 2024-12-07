@@ -10,6 +10,12 @@ Distributed training for deep neural networks has become a mainstream approach f
 In this project, we implement distributed training (including federated learning in data heterogeneity) to a practical autonomous driving scenario. Specifically, we investigate the performance of two decentralized training methods on the Road Surface Classification Dataset ([RSCD](https://thu-rsxd.com/rscd/)), which classifies surfaces into 27 labeled classes based on their evenness, friction, and material. The sample images, detailed name of subclasses, and number of images for each class are shown in the following three figures. The deep neural network architecture used is Deep Residual Networks (ResNet-50). Training is conducted with an independently and identically distributed (IID) setting and the non-IID setting.
 
 <p align="center">
+  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/classification_sample.png?raw=true" alt="Sample image of RSCD" />
+  <br>
+  Figure 1. Sample images of RSCD.
+</p>
+
+<p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/classification_sample.png?raw=true" alt="Sublime's custom image"/>
   Figure 1. Sample iamges of RSCD.
 </p>
