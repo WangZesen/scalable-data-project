@@ -47,13 +47,13 @@ However, since data sharing is forbidden, federated learning also faces the data
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/class_distribution-0.1.png?raw=true" alt="Sublime's custom image" />
   <br>
-  Figure 1. alpha=0.1.
+  Figure 6. alpha=0.1.
 </p>
 
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/class_distribution-0.01.png?raw=true" alt="Sublime's custom image" />
   <br>
-  Figure 1. alpha=0.01.
+  Figure 7. alpha=0.01.
 </p>
 
 ## Method
