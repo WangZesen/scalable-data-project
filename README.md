@@ -73,6 +73,10 @@ In All-Reduce, all workers must participate in each iteration. On the other hand
 
 ## Results 
 ### 2x4xA40 GPUs with IID data distribution
+
+According to the results, All-Reduce method needs 1220.95 seconds to achieve 85.02% top-1 accuracy; while Decent can get the highest 85.59% top-1 accuracy within	940.18 seconds. Thus, Compared with All-Reduce, improvements of 23.00% and 0.67% are observed for training time and model performance, respectively, for Decent method. The results of top-5 accuracy and loss are similar, which shows the superiority of Decent.
+
+
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A40_iid_acc1.png?raw=true" alt="Sublime's custom image"/>
   
@@ -87,10 +91,12 @@ In All-Reduce, all workers must participate in each iteration. On the other hand
   
 </p>
 
-According to the results, All-Reduce method needs 1220.95 seconds to achieve 85.02% top-1 accuracy; while Decent can get the highest 85.59% top-1 accuracy within	940.18 seconds. Thus, Compared with All-Reduce, improvements of 23.00% and 0.67% are observed for training time and model performance, respectively, for Decent method. The results of top-5 accuracy and loss are similar, which shows the superiority of Decent.
-
 
 ### 2x4xA100 GPUs with IID data distribution 
+
+As illustrated by the figures and tables, the training times for All-Reduced and Decent are 546.64 seconds and 508.78 seconds, respectively; and the top-1 accuracies are 85.39% and 84.84% respectively. Such that, Decent outperforms All-Reduced by 6.93% and 0.65% in terms of learning speed and model accuracy, respectively.
+
+
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/A100-iid-acc1.png?raw=true" alt="Sublime's custom image"/>
   
