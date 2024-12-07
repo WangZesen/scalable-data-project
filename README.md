@@ -16,12 +16,8 @@ In this project, we implement distributed training (including federated learning
 </p>
 
 <p align="center">
-  <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/classification_sample.png?raw=true" alt="Sublime's custom image"/>
-  Figure 1. Sample iamges of RSCD.
-</p>
-
-<p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/class-RSCD.png?raw=true" alt="Sublime's custom image"/>
+  <br>
   Figure 2. Subclasses of RSCD.
 </p>
 
