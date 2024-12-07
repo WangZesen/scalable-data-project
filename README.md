@@ -94,7 +94,7 @@ According to the results, All-Reduce method needs 1220.95 seconds to achieve 85.
 
 ### 2x4xA100 GPUs with IID data distribution 
 
-As illustrated by the figures and tables, the training times for All-Reduced and Decent are 546.64 seconds and 508.78 seconds, respectively; and the top-1 accuracies are 85.39% and 84.84% respectively. Such that, Decent outperforms All-Reduced by 6.93% and 0.65% in terms of learning speed and model accuracy, respectively.
+As illustrated by the figures and tables, the training times for All-Reduced and Decent are 546.64 seconds and 508.78 seconds, respectively; and the top-1 accuracies are 85.39% and 84.84% respectively. Such that, Decent outperforms All-Reduced by 6.93% and 0.65% in terms of learning speed and model accuracy, respectively. Decent also performs better than All-Reduced in other metrics, i.e., top-5 accuracy and loss.
 
 
 <p align="center">
@@ -154,6 +154,10 @@ As illustrated by the figures and tables, the training times for All-Reduced and
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/Decen 2x4xA100 Non-IID alphas.png?raw=true" alt="Sublime's custom image"/>
 </p>
+
+
+Compared with IID setting, the model performance in non-IID could drop, and the higher level of non-IID (lower value of $\alpha$), the worse the accuracy.
+
 
 ## Reproduce Experiments
 
