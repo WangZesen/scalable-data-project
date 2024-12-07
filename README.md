@@ -9,8 +9,6 @@ Distributed training for deep neural networks has become a mainstream approach f
 
 In this project, we implement distributed training (including federated learning in data heterogeneity) to a practical autonomous driving scenario. Specifically, we investigate the performance of decentralized training on the Road Surface Classification Dataset ([RSCD](https://thu-rsxd.com/rscd/)), which classifies surfaces into 27 labeled classes based on their evenness, friction, and material. The sample images, detailed name of subclasses, and number of images for each class are shown in the following three figures. The deep neural network architecture used is Deep Residual Networks (ResNet-50). Training is conducted with an independently and identically distributed (IID) setting and the non-IID setting (by using dirichlet distribution).
 
-In the realistic scenario, the images captured by cameras on automated vehicles are senstive as they may contain private information of passengers or vehicles (e.g., position and routing). Such that, the centralized learning paradigm for raod surface classification that requires data collection maybe infeasible considering the data protection regulations. Federated learning is a promising solution to bridge such data islands by only transfering model parameters. Moreover, such a collaborative learning paradigm can utilize the distributed resources (including data, computation, and communication resources) among automated vehicles. However, since data sharing is forbidden, federated learning also faces the data heterigeneity issue, i.e., the data distribution of a client/vehicle is different from each other. This is because different automated vehicles run in different areas and time slots, thus the collected images for model training are naturally in the spatial-temporal heterogeneity way. Such a heterogeneity may significantly reduce the overall model performance under distributed training. That is why this project want to explore federated learning (especially in non-IID setting) for vehiculary road surface classification.
-
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/classification_sample.png?raw=true" alt="Sample image of RSCD" />
   <br>
@@ -27,6 +25,12 @@ In the realistic scenario, the images captured by cameras on automated vehicles 
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/counts-RSCD.jpeg?raw=true" alt="Sublime's custom image"/>
   Figure 3. Number of images for each class.
 </p>
+
+
+In the realistic scenario, the images captured by cameras on automated vehicles are senstive as they may contain private information of passengers or vehicles (e.g., position and routing). Such that, the centralized learning paradigm for raod surface classification that requires data collection maybe infeasible considering the data protection regulations. Federated learning is a promising solution to bridge such data islands by only transfering model parameters. Moreover, such a collaborative learning paradigm can utilize the distributed resources (including data, computation, and communication resources) among automated vehicles. 
+
+However, since data sharing is forbidden, federated learning also faces the data heterigeneity issue, i.e., the data distribution of a client/vehicle is different from each other. This is because different automated vehicles run in different areas and time slots, thus the collected images for model training are naturally in the spatial-temporal heterogeneity way. Such a heterogeneity may significantly reduce the overall model performance under distributed training. That is why this project want to explore federated learning (especially in non-IID setting) for vehiculary road surface classification. By setting different $\alpha$ values (e.g., 0.01, 0.1, 1.0, and 10.0) in dirichlet distribution, we can simulate different data heterigeneity level in the experiment. Specifically, a lower value of $\alpha$ indicates a higher level of heterigeneity.
+
 
 ## Method
 
