@@ -156,7 +156,7 @@ As illustrated by the figures and tables, the training times for All-Reduced and
 </p>
 
 
-Compared with IID setting, the model performance in non-IID could drop, and the higher level of non-IID (lower value of $\alpha$), the worse the accuracy. E.g., with A100 GPUs and decent methods, the top-5 accuracies are	98.97%, 98.89%, 97.98%, 71.33%, and 33.67% for the $\alpha$ values of $\infty$ 10.0, 1.0, 0.1, and 0.01, respectively.
+Compared with IID setting, the model performance in non-IID could drop, and the higher level of non-IID (lower value of $\alpha$), the worse the accuracy. E.g., with A100 GPUs and decent methods, the top-5 accuracies are	98.97%, 98.89%, 97.98%, 71.33%, and 33.67% for the $\alpha$ values of +$\infty$, 10.0, 1.0, 0.1, and 0.01, respectively. Although the performances are not good enough when $\alpha$ values are lower than or equal to 0.1, the top-5 accuracies are nearly the same as IID setting when $\alpha$ values are higher than 0.1.
 
 
 ## Reproduce Experiments
