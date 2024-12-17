@@ -78,11 +78,11 @@ where the first term is an update that reduces the value of $` F_i(x_i) `$ and t
 The system splits the execution of the backward pass into buckets and interleaves the corresponding
 local model updates. After updating a bucket, the corresponding communication can be initiated, and
 its results are not needed by the worker and its neighbors until the same bucket requires updating in
-the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration as in Figure 1.
+the next iteration. By doing so, the decentralized updates are independent of neighbor information within the same iteration as in Figure 8.
 
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/timelines.png?raw=true" alt="Sublime's custom image"/>
-  Figure 1. Timelines of two workers in decentralized training.
+  Figure 8. Timelines of two workers in decentralized training.
 </p>
 
 
@@ -92,7 +92,7 @@ In All-Reduce, all workers must participate in each iteration. On the other hand
 
 <p align="center">
   <img src="https://github.com/WangZesen/scalable-data-project/blob/main/Fig/ring.png?raw=true" alt="Sublime's custom image"/>
-  Figure 2. The alternating Exponential Ring topology
+  Figure 9. The alternating Exponential Ring topology
 </p>
 
 ## Results 
