@@ -1,8 +1,14 @@
 # **Decent-RSC**: Project of Scalable Data Science and Distributed ML
 
-## Members
+## Members & Contributions
 
-Zesen Wang, Palatip Jopanya, Sheng Liu
+Zesen Wang: Prepare the codebase of decentralized training, run baselines and decentralized training experiments on iid data distribution
+
+Palatip Jopanya: Write the documentation of the project, collect, visualize, and interpret the results
+
+Sheng Liu: Write the documentation about federated learning, run baselines and decentralized training experiments on non-iid data distribution
+
+[Link to slides](https://docs.google.com/presentation/d/1xOGuZ1hnPyZ-LjPIzrphodoS9kccNHnq/edit?usp=sharing&ouid=104638473168263594305&rtpof=true&sd=true)
 
 ## Introduction
 Distributed training for deep neural networks has become a mainstream approach for consensus algorithms due to its efficiency and scalability, with the All-Reduce algorithm being a common example. However, in practice, a high-speed network connection between workers is essential to achieve high training performance in a distributed workflow. Decentralized training, on the other hand, is a promising alternative for training deep neural networks. The key difference between decentralized and distributed training is that, in decentralized training, only immediate worker pairs (or pre-defined selected worker pairs corresponding to the communication topology) communicate. This reduces communication overhead and speeds up per-iteration runtime to accelerate training time eventually.
@@ -202,6 +208,9 @@ pip install wandb seaborn loguru scipy tqdm tomli-w pydantic
 pip install decent-dp
 ```
 
+> [!NOTE]
+> The wrapper library of decentralized training is packed as a Python library, and the source code is available at [Github](https://github.com/WangZesen/Decent-DP).
+
 One has to login to wandb for uploading the training/testing statistics before runing the experiments ([detailed instruction](https://docs.wandb.ai/quickstart/)).
 ```
 wandb login
@@ -232,7 +241,7 @@ data/RSCD/
 
 ### Train
 
-The experiments are conducted on a data center using Slurm as the scheduler. To run the training with four A40 GPUs, 
+The experiments are conducted on a data center using Slurm as the scheduler. To run the training with four A40 GPUs, run the following script with corresponding data configuration and training configuration.
 
 ```
 sbatch -A <PROJECT_ACCOUNT> script/train/4xA40.sh $(which torchrun) config/data/rscd.toml config/train/resnet50.toml
@@ -243,7 +252,10 @@ The evaulation on the validation set is done along with the training, and it's l
 
 #### Configs
 - `config/data/rscd.toml`: config file for RSC dataset.
+- `config/data/rscd-non-iid.toml`: config file for RSC dataset with non-iid data distribution.
 - `config/train/resnet50.toml`: config file for typical distributed training with ResNet-50.
 - `config/train/decent_resnet50.toml`: config file for decentralized training with ResNet-50.
 
+## Reference
 
+For more details about the decentralized training, please refer to the paper [From promise to practice: realizing high-performance decentralized training](https://arxiv.org/pdf/2410.11998).
